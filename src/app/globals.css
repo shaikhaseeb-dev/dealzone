@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --border: #e5e7eb;
+    --text: #0a0a0a;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --shadow-card: 0 2px 12px rgba(0,0,0,0.07);
+    --shadow-hover: 0 8px 32px rgba(59,130,246,0.14);
+  }
+
+  .dark {
+    --bg: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #161616;
+    --border: #262626;
+    --text: #f5f5f5;
+    --text-secondary: #a3a3a3;
+    --text-muted: #525252;
+    --shadow-card: 0 2px 12px rgba(0,0,0,0.5);
+    --shadow-hover: 0 8px 32px rgba(59,130,246,0.22);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  ::selection {
+    background: #3B82F6;
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3B82F6;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border bg-[var(--bg-card)] transition-all duration-300;
+    border-color: var(--border);
+    box-shadow: var(--shadow-card);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(59,130,246,0.3);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+    bg-accent text-white font-semibold px-6 py-3
+    transition-all duration-200 active:scale-95
+    hover:bg-accent-600 focus:outline-none focus:ring-2 focus:ring-accent/50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl
+    border font-semibold px-6 py-3
+    transition-all duration-200 active:scale-95
+    focus:outline-none focus:ring-2 focus:ring-accent/30;
+    border-color: var(--border);
+    color: var(--text);
+    background: var(--bg-card);
+  }
+
+  .btn-secondary:hover {
+    border-color: #3B82F6;
+    color: #3B82F6;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold tracking-tight;
+    color: var(--text);
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+
+  .badge-discount {
+    @apply badge bg-green-500/10 text-green-600 dark:bg-green-400/10 dark:text-green-400;
+  }
+
+  .badge-trending {
+    @apply badge bg-orange-500/10 text-orange-600 dark:bg-orange-400/10 dark:text-orange-400;
+  }
+
+  .badge-new {
+    @apply badge bg-accent/10 text-accent-600 dark:text-accent-400;
+  }
+
+  .skeleton {
+    @apply animate-[skeleton_1.5s_ease-in-out_infinite] rounded-lg;
+    background: linear-gradient(
+      90deg,
+      var(--bg-secondary) 25%,
+      var(--border) 50%,
+      var(--bg-secondary) 75%
+    );
+    background-size: 200% 100%;
+  }
+
+  .sticky-cta {
+    @apply fixed bottom-0 left-0 right-0 z-50 p-4 transition-transform duration-300;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  /* Horizontal scroll snap */
+  .scroll-snap-x {
+    @apply flex gap-4 overflow-x-auto pb-3;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .scroll-snap-x::-webkit-scrollbar { display: none; }
+  .scroll-snap-x > * { scroll-snap-align: start; }
+}
+
+/* Page transition */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageIn 0.35s ease-out forwards;
+}
