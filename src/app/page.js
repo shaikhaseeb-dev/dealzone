@@ -7,25 +7,35 @@ import { CategoryChipRow } from '@/components/ui/CategoryChip';
 import { DealBanner } from '@/components/ui/DealCard';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp, Tag } from 'lucide-react';
-import {
-  getFeaturedProduct,
-  getTrendingProducts,
-  getBestUnder500,
-  products,
-  categories,
-  deals,
-} from '@/lib/mockData';
+import { getProducts, getCategories } from '@/lib/supabase';
 
 export const metadata = {
   title: 'DealZone — Best Deals on Trending Products',
   description: 'Hand-picked deals on electronics, fashion, kitchen & more. Verified discounts on Amazon & Flipkart.',
 };
 
-export default function HomePage() {
-  const featured = getFeaturedProduct();
-  const trending = getTrendingProducts();
-  const under500 = getBestUnder500();
-  const dealOfDay = deals[0];
+export default async function HomePage() {
+  const { data: products } = await getProducts();
+const { data: categories } = await getCategories();
+
+const formattedProducts = (products || []).map((p) => ({
+  ...p,
+  shortTitle: p.short_title,
+  originalPrice: p.original_price,
+  affiliateLinks: p.affiliate_links,
+  isTrending: p.is_trending,
+  isNew: p.is_new,
+  inStock: p.in_stock,
+  price: p.best_price,
+}));
+
+const featured = formattedProducts.find(p => p.featured);
+
+const trending = formattedProducts.filter(p => p.isTrending);
+
+const under500 = formattedProducts.filter(p => p.price <= 500);
+
+const dealOfDay = trending?.[0];
 
   return (
     <>
@@ -49,7 +59,7 @@ export default function HomePage() {
           <DealsSection
             title="Deals of the Day"
             tag="🔥 Hot"
-            products={dealOfDay.products}
+            products={trending}
             viewAllHref="/deals"
           />
         </section>

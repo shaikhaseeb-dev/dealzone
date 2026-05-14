@@ -1,10 +1,13 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductGrid from '@/components/ui/ProductGrid';
 import { CategoryChipRow } from '@/components/ui/CategoryChip';
-import { getProductsByCategory, categories } from '@/lib/mockData';
+import {
+  getProducts,
+  getCategories,
+} from '@/lib/supabase';
 import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,13 +32,47 @@ export default function CategoryPage({ params }) {
   const [maxPrice, setMaxPrice] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
-  const category = categories.find(c => c.slug === params.slug) || {
-    name: params.slug.charAt(0).toUpperCase() + params.slug.slice(1),
-    slug: params.slug,
-    icon: '📦',
-  };
+  const [products, setProducts] = useState([]);
+const [categories, setCategories] = useState([]);
 
-  const allProducts = getProductsByCategory(params.slug);
+useEffect(() => {
+  fetchData();
+}, []);
+
+async function fetchData() {
+  const { data: productsData } = await getProducts();
+
+  const { data: categoriesData } = await getCategories();
+
+  const formattedProducts = (productsData || []).map((p) => ({
+    ...p,
+    shortTitle: p.short_title,
+    originalPrice: p.original_price,
+    affiliateLinks: p.affiliate_links,
+    isTrending: p.is_trending,
+    isNew: p.is_new,
+    inStock: p.in_stock,
+    price: p.best_price,
+  }));
+
+  setProducts(formattedProducts);
+
+  setCategories(categoriesData || []);
+}
+
+const category = (categories || []).find(
+
+  
+  (c) => c.slug === params.slug
+) || {
+  name: params.slug.charAt(0).toUpperCase() + params.slug.slice(1),
+  slug: params.slug,
+  icon: '📦',
+};
+const allProducts = products.filter(
+  (p) => p.category === params.slug
+);
+
 
   const filtered = useMemo(() => {
     let result = [...allProducts];

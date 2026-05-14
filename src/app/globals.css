@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -13,8 +13,8 @@
     --text: #0a0a0a;
     --text-secondary: #6b7280;
     --text-muted: #9ca3af;
-    --shadow-card: 0 2px 12px rgba(0,0,0,0.07);
-    --shadow-hover: 0 8px 32px rgba(59,130,246,0.14);
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.07);
+    --shadow-hover: 0 8px 32px rgba(59, 130, 246, 0.14);
   }
 
   .dark {
@@ -25,8 +25,8 @@
     --text: #f5f5f5;
     --text-secondary: #a3a3a3;
     --text-muted: #525252;
-    --shadow-card: 0 2px 12px rgba(0,0,0,0.5);
-    --shadow-hover: 0 8px 32px rgba(59,130,246,0.22);
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 8px 32px rgba(59, 130, 246, 0.22);
   }
 
   * {
@@ -44,12 +44,14 @@
   body {
     background-color: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', system-ui, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: "DM Sans", system-ui, sans-serif;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
   }
 
   ::selection {
-    background: #3B82F6;
+    background: #3b82f6;
     color: white;
   }
 
@@ -65,7 +67,7 @@
     border-radius: 99px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3B82F6;
+    background: #3b82f6;
   }
 }
 
@@ -78,7 +80,7 @@
 
   .card:hover {
     box-shadow: var(--shadow-hover);
-    border-color: rgba(59,130,246,0.3);
+    border-color: rgba(59, 130, 246, 0.3);
   }
 
   .btn-primary {
@@ -99,8 +101,8 @@
   }
 
   .btn-secondary:hover {
-    border-color: #3B82F6;
-    color: #3B82F6;
+    border-color: #3b82f6;
+    color: #3b82f6;
   }
 
   .section-title {
@@ -149,15 +151,57 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  .scroll-snap-x::-webkit-scrollbar { display: none; }
-  .scroll-snap-x > * { scroll-snap-align: start; }
+  .scroll-snap-x::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-snap-x > * {
+    scroll-snap-align: start;
+  }
 }
 
 /* Page transition */
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .page-enter {
   animation: pageIn 0.35s ease-out forwards;
+}
+
+/* ───────── Product Admin Modal ───────── */
+
+.product-modal {
+  width: 100%;
+  max-width: 1400px;
+
+  min-height: 95vh;
+
+  margin: 8px auto;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background: var(--bg-card);
+
+  border: 1px solid var(--border);
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+}
+
+.product-modal-body {
+  flex: 1;
+
+  padding: 24px;
+
+  overflow-y: auto;
 }

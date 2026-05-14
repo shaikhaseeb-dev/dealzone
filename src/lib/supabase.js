@@ -22,7 +22,7 @@ export async function getProducts(filters = {}) {
   if (filters.category) query = query.eq('category', filters.category);
   if (filters.trending) query = query.eq('is_trending', true);
   if (filters.featured) query = query.eq('featured', true);
-  if (filters.maxPrice) query = query.lte('price', filters.maxPrice);
+  if (filters.maxPrice) query = query.lte('best_price', filters.maxPrice);
   if (filters.limit) query = query.limit(filters.limit);
 
   return query;

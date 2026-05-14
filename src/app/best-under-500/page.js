@@ -1,17 +1,30 @@
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import ProductGrid from '@/components/ui/ProductGrid';
-import { getBestUnder500 } from '@/lib/mockData';
-import { Tag } from 'lucide-react';
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ProductGrid from "@/components/ui/ProductGrid";
+import { getProducts } from "@/lib/supabase";
+import { Tag } from "lucide-react";
 
 export const metadata = {
-  title: 'Best Products Under ₹500 | DealZone',
-  description: 'Top-rated products under ₹500. Quality picks without breaking the bank.',
+  title: "Best Products Under ₹500 | DealZone",
+  description:
+    "Top-rated products under ₹500. Quality picks without breaking the bank.",
 };
 
-export default function BestUnder500Page() {
-  const products = getBestUnder500();
+export default async function BestUnder500Page() {
+  const { data } = await getProducts();
 
+  const products = (data || [])
+    .map((p) => ({
+      ...p,
+      shortTitle: p.short_title,
+      originalPrice: p.original_price,
+      affiliateLinks: p.affiliate_links,
+      isTrending: p.is_trending,
+      isNew: p.is_new,
+      inStock: p.in_stock,
+      price: p.best_price,
+    }))
+    .filter((p) => p.price <= 500);
   return (
     <>
       <Navbar />
@@ -21,7 +34,9 @@ export default function BestUnder500Page() {
             <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center">
               <Tag size={20} className="text-green-500" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">Best Under ₹500</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)]">
+              Best Under ₹500
+            </h1>
           </div>
           <p className="text-[var(--text-secondary)]">
             {products.length} budget-friendly picks — all under ₹500
@@ -30,11 +45,15 @@ export default function BestUnder500Page() {
 
         <div className="mb-8 p-4 rounded-xl bg-green-500/5 border border-green-500/20">
           <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-            💚 All products on this page are priced under ₹500 and hand-verified for quality.
+            💚 Affordable picks under ₹500 from trusted marketplaces and
+            trending offers.
           </p>
         </div>
 
-        <ProductGrid products={products} emptyMessage="No under ₹500 products right now. Check back soon!" />
+        <ProductGrid
+          products={products}
+          emptyMessage="No under ₹500 products right now. Check back soon!"
+        />
         <div className="h-12" />
       </main>
       <Footer />

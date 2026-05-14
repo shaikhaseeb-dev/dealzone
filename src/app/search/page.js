@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductGrid from '@/components/ui/ProductGrid';
-import { products } from '@/lib/mockData';
+import { getProducts } from '@/lib/supabase';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
 

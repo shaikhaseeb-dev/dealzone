@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { analyticsData, products } from '@/lib/mockData';
+import { getProducts, getAnalytics } from '@/lib/supabase';
 import {
   MousePointerClick, TrendingUp, Package, Eye,
   ArrowRight, ArrowUpRight, Star, ExternalLink
@@ -33,9 +33,22 @@ function StatCard({ icon: Icon, label, value, change, color = 'accent' }) {
   );
 }
 
-export default function AdminDashboard() {
-  const stats = analyticsData;
+export default async function AdminDashboard() {
+  const { data } = await getProducts();
 
+const products = (data || []).map((p) => ({
+  ...p,
+  shortTitle: p.short_title,
+  originalPrice: p.original_price,
+  affiliateLinks: p.affiliate_links,
+  isTrending: p.is_trending,
+  isNew: p.is_new,
+  inStock: p.in_stock,
+  price: p.best_price,
+}));
+
+
+const { data: stats } = await getAnalytics();
   return (
     <div className="page-enter">
       <div className="flex items-center justify-between mb-6">
@@ -89,7 +102,7 @@ export default function AdminDashboard() {
             </Link>
           </div>
           <div className="space-y-3">
-            {stats.topProducts.map((p, i) => (
+            {(stats?.topProducts || []).map((p, i) => (
               <div key={p.id} className="flex items-center gap-3">
                 <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold
                   ${i === 0 ? 'bg-amber-500/20 text-amber-500' :
@@ -115,7 +128,7 @@ export default function AdminDashboard() {
         <div className="card p-5">
           <h2 className="font-semibold text-[var(--text)] mb-4">Clicks by Category</h2>
           <div className="space-y-3">
-            {stats.categoryBreakdown.map((cat) => (
+            {(stats?.categoryBreakdown || []).map((cat) => (
               <div key={cat.category}>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-[var(--text-secondary)]">{cat.category}</span>
