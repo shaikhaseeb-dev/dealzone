@@ -45,11 +45,7 @@ export default async function HomePage() {
           new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         tag: trending[0].tag || "🔥 Hot Deal",
         color: trending[0].color || "from-red-500 to-orange-500",
-        title:
-          trending[0].title ||
-          trending[0].shortTitle ||
-          trending[0].title ||
-          "Amazing Deal",
+        title: trending[0].title || trending[0].shortTitle || "Amazing Deal",
       }
     : null;
 

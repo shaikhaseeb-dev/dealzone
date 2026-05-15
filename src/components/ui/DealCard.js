@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Clock, ArrowRight } from "lucide-react";
@@ -10,10 +11,18 @@ export default function DealCard({ product }) {
   const { trackClick } = useClickTracking();
   const primaryLink = product.affiliateLinks?.[0];
 
-  const handleBuy = (e) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleBuy = async (e) => {
     e.preventDefault();
-    if (primaryLink)
-      trackClick(product.id, primaryLink.platform, primaryLink.url);
+    if (!primaryLink) return;
+
+    setIsLoading(true);
+    try {
+      await trackClick(product.id, primaryLink.platform, primaryLink.url);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -57,10 +66,11 @@ export default function DealCard({ product }) {
         </div>
         <button
           onClick={handleBuy}
+          disabled={isLoading}
           className="flex items-center justify-center gap-1 text-xs font-semibold py-2
-            rounded-lg bg-accent text-white hover:bg-accent-600 transition-colors active:scale-95"
+    rounded-lg bg-accent text-white hover:bg-accent-600 transition-colors active:scale-95 disabled:opacity-50"
         >
-          Buy Now <ArrowRight size={12} />
+          {isLoading ? "⏳ Opening..." : "Buy Now"} <ArrowRight size={12} />
         </button>
       </div>
     </div>
@@ -68,9 +78,14 @@ export default function DealCard({ product }) {
 }
 
 export function DealBanner({ deal }) {
-  // FIX: Add null check for deal
   if (!deal) {
-    return null;
+    return (
+      <div className="rounded-xl p-4 bg-gradient-to-r from-gray-300 to-gray-400 text-gray-700 mb-4">
+        <p className="text-center text-sm font-medium">
+          No active deals right now
+        </p>
+      </div>
+    );
   }
 
   const countdown = useCountdown(
