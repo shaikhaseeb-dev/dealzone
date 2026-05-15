@@ -1,16 +1,16 @@
-'use client';
-import { useState, useEffect, useRef } from 'react';
-import { ExternalLink } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
-import { useClickTracking } from '@/hooks/useClickTracking';
-import { cn } from '@/lib/utils';
+"use client";
+import { useState, useEffect, useRef } from "react";
+import { ExternalLink } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
+import { useClickTracking } from "@/hooks/useClickTracking";
+import { cn } from "@/lib/utils";
 
 const PLATFORM_BTN = {
-  Amazon:   'bg-orange-500 hover:bg-orange-600',
-  Flipkart: 'bg-[#2874F0] hover:bg-blue-700',
-  Meesho:   'bg-pink-500 hover:bg-pink-600',
-  Myntra:   'bg-purple-600 hover:bg-purple-700',
-  Nykaa:    'bg-rose-500 hover:bg-rose-600',
+  Amazon: "bg-orange-500 hover:bg-orange-600",
+  Flipkart: "bg-[#2874F0] hover:bg-blue-700",
+  Meesho: "bg-pink-500 hover:bg-pink-600",
+  Myntra: "bg-purple-600 hover:bg-purple-700",
+  Nykaa: "bg-rose-500 hover:bg-rose-600",
 };
 
 export default function StickyCTA({ product }) {
@@ -22,7 +22,7 @@ export default function StickyCTA({ product }) {
     if (!sentinelRef.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(!entry.isIntersecting),
-      { threshold: 0 }
+      { threshold: 0 },
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
@@ -45,9 +45,9 @@ export default function StickyCTA({ product }) {
       {/* Sticky bar */}
       <div
         className={cn(
-          'fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300',
-          'bg-[var(--bg-card)]/95 backdrop-blur-md border-t border-[var(--border)]',
-          visible ? 'translate-y-0' : 'translate-y-full'
+          "fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300",
+          "bg-[var(--bg-card)]/95 backdrop-blur-md border-t border-[var(--border)]",
+          visible ? "translate-y-0" : "translate-y-full",
         )}
       >
         <div className="max-w-3xl mx-auto flex items-center gap-3 px-4 py-3">
@@ -73,20 +73,24 @@ export default function StickyCTA({ product }) {
                 key={link.platform}
                 onClick={() => trackClick(product.id, link.platform, link.url)}
                 className={cn(
-                  'flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white',
-                  'text-xs sm:text-sm font-bold transition-all active:scale-95',
-                  PLATFORM_BTN[link.platform] || 'bg-accent hover:bg-accent-600'
+                  "flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-white",
+                  "text-xs sm:text-sm font-bold transition-all active:scale-95",
+                  PLATFORM_BTN[link.platform] ||
+                    "bg-accent hover:bg-accent-600",
                 )}
               >
                 <ExternalLink size={13} />
                 <span className="hidden sm:inline">{link.platform}</span>
                 <span className="sm:hidden">
-                  {link.platform === 'Amazon' ? 'Amzn' :
-                   link.platform === 'Flipkart' ? 'Flip' :
-                   link.platform.slice(0, 4)}
+                  {link.platform === "Amazon"
+                    ? "Amzn"
+                    : link.platform === "Flipkart"
+                      ? "Flip"
+                      : (link.platform || "").slice(0, 4)}
                 </span>
                 <span className="font-normal opacity-80 hidden md:inline">
-                  {' '}· {formatPrice(link.price)}
+                  {" "}
+                  · {formatPrice(link.price)}
                 </span>
               </button>
             ))}
