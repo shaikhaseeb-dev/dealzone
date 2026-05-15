@@ -59,12 +59,14 @@ export default async function AdminDashboard() {
 
   const { data: stats } = await getAnalytics();
 
+  // FIX #1: Safe default values for stats
   const safeStats = stats || {
     totalClicks: 0,
     todayClicks: 0,
     topProducts: [],
     categoryBreakdown: [],
   };
+
   return (
     <div className="page-enter">
       <div className="flex items-center justify-between mb-6">
@@ -145,12 +147,14 @@ export default async function AdminDashboard() {
                   {i + 1}
                 </div>
                 <div className="flex-1 min-w-0">
+                  {/* FIX #2: Multiple property fallbacks for product title */}
                   <p className="text-sm font-medium text-[var(--text)] truncate">
                     {p.shortTitle ||
                       p.short_title ||
                       p.title ||
                       "Untitled Product"}
                   </p>
+                  {/* FIX #3: Multiple property fallbacks for product price */}
                   <p className="text-xs text-[var(--text-muted)]">
                     {formatPrice(p.price || p.best_price || 0)}
                   </p>
@@ -243,6 +247,7 @@ export default async function AdminDashboard() {
                       {p.category}
                     </span>
                   </td>
+                  {/* FIX #4: Safe price fallback */}
                   <td className="py-3 px-2 font-semibold text-[var(--text)]">
                     {formatPrice(p.price || p.best_price || 0)}
                   </td>
