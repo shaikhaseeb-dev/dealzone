@@ -1,17 +1,32 @@
-'use client';
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { ArrowRight, Zap, Shield, Truck, ExternalLink } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
-import { useClickTracking } from '@/hooks/useClickTracking';
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Zap, Shield, Truck, ExternalLink } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
+import { useClickTracking } from "@/hooks/useClickTracking";
 
 export default function HeroSection({ product }) {
   const [imgError, setImgError] = useState(false);
   const { trackClick } = useClickTracking();
-  const primaryLink = product?.affiliateLinks?.[0];
+  const primaryLink =
+    product?.affiliateLinks?.[0] || product?.affiliate_links?.[0];
 
   if (!product) return null;
+
+  // FIX: Safe image access
+  const productImage =
+    product.images?.[0] || product.image || "/placeholder.png";
+  const productTitle =
+    product.title || product.short_title || "Featured Product";
+  const productDescription =
+    product.description || "Check out this amazing deal!";
+  const productPrice = product.price || product.best_price || 0;
+  const productOriginal =
+    product.originalPrice || product.original_price || productPrice;
+  const productDiscount = product.discount || 0;
+  const productDelivery = product.delivery || "Free Delivery in 2-3 days";
+  const productWarranty = product.warranty || "1 Year Warranty";
 
   return (
     <section className="relative overflow-hidden bg-[var(--bg-secondary)] rounded-2xl mb-12">
@@ -26,38 +41,42 @@ export default function HeroSection({ product }) {
               <span className="badge bg-accent/10 text-accent font-semibold text-xs px-3 py-1 rounded-full">
                 ⚡ Featured Deal
               </span>
-              {product.isTrending && (
-                <span className="badge badge-trending text-xs">🔥 Trending</span>
-              )}
+              {product.isTrending ||
+                (product.is_trending && (
+                  <span className="badge badge-trending text-xs">
+                    🔥 Trending
+                  </span>
+                ))}
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[var(--text)] leading-tight mb-3">
-              {product.title}
+              {productTitle}
             </h1>
 
             <p className="text-[var(--text-secondary)] text-sm sm:text-base leading-relaxed mb-6 max-w-md">
-              {product.description}
+              {productDescription}
             </p>
 
             {/* Price block */}
             <div className="flex items-center gap-4 mb-6">
               <div>
                 <div className="text-3xl sm:text-4xl font-bold text-[var(--text)]">
-                  {formatPrice(product.price)}
+                  {formatPrice(productPrice)}
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-sm text-[var(--text-muted)] line-through">
-                    {formatPrice(product.originalPrice)}
+                    {formatPrice(productOriginal)}
                   </span>
                   <span className="text-sm font-bold text-green-500">
-                    {product.discount}% OFF
+                    {productDiscount}% OFF
                   </span>
                 </div>
               </div>
               <div className="w-px h-12 bg-[var(--border)]" />
               <div className="text-sm text-[var(--text-secondary)]">
                 <div className="font-semibold text-[var(--text)]">
-                  Save {formatPrice(product.originalPrice - product.price)}
+                  Save{" "}
+                  {formatPrice(Math.max(0, productOriginal - productPrice))}
                 </div>
                 <div>Limited time offer</div>
               </div>
@@ -65,18 +84,22 @@ export default function HeroSection({ product }) {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 mb-6">
-              {product.affiliateLinks?.map((link) => (
-                <button
-                  key={link.platform}
-                  onClick={() => trackClick(product.id, link.platform, link.url)}
-                  className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm
+              {(product.affiliateLinks || product.affiliate_links || [])?.map(
+                (link) => (
+                  <button
+                    key={link.platform}
+                    onClick={() =>
+                      trackClick(product.id, link.platform, link.url)
+                    }
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm
                     text-white transition-all active:scale-95 hover:brightness-110
-                    ${link.platform === 'Amazon' ? 'bg-orange-500' : 'bg-blue-600'}`}
-                >
-                  <ExternalLink size={16} />
-                  {link.label}
-                </button>
-              ))}
+                    ${link.platform === "Amazon" ? "bg-orange-500" : "bg-blue-600"}`}
+                  >
+                    <ExternalLink size={16} />
+                    {link.label || link.platform}
+                  </button>
+                ),
+              )}
               <Link
                 href={`/product/${product.slug}`}
                 className="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm
@@ -90,11 +113,11 @@ export default function HeroSection({ product }) {
             <div className="flex flex-wrap gap-4 text-xs text-[var(--text-secondary)]">
               <div className="flex items-center gap-1.5">
                 <Truck size={14} className="text-accent" />
-                {product.delivery}
+                {productDelivery}
               </div>
               <div className="flex items-center gap-1.5">
                 <Shield size={14} className="text-accent" />
-                {product.warranty}
+                {productWarranty}
               </div>
               <div className="flex items-center gap-1.5">
                 <Zap size={14} className="text-accent" />
@@ -111,8 +134,8 @@ export default function HeroSection({ product }) {
               <div className="relative w-full h-full rounded-2xl overflow-hidden bg-[var(--bg-card)] border border-[var(--border)]">
                 {!imgError ? (
                   <Image
-                    src={product.images[0]}
-                    alt={product.title}
+                    src={productImage}
+                    alt={productTitle}
                     fill
                     sizes="(max-width: 768px) 256px, 384px"
                     className="object-cover"
@@ -120,7 +143,9 @@ export default function HeroSection({ product }) {
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-8xl">📦</div>
+                  <div className="w-full h-full flex items-center justify-center text-8xl bg-[var(--bg-secondary)]">
+                    📦
+                  </div>
                 )}
               </div>
             </div>
