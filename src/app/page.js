@@ -36,7 +36,22 @@ export default async function HomePage() {
 
   const under500 = formattedProducts.filter((p) => p.price <= 500);
 
-  const dealOfDay = trending?.[0];
+  // FIX: Ensure dealOfDay has safe defaults
+  const dealOfDay = trending?.[0]
+    ? {
+        ...trending[0],
+        endsAt:
+          trending[0].endsAt ||
+          new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        tag: trending[0].tag || "🔥 Hot Deal",
+        color: trending[0].color || "from-red-500 to-orange-500",
+        title:
+          trending[0].title ||
+          trending[0].shortTitle ||
+          trending[0].title ||
+          "Amazing Deal",
+      }
+    : null;
 
   return (
     <>
@@ -55,11 +70,11 @@ export default async function HomePage() {
 
         {/* Deal of the Day banner */}
         <section className="mb-8">
-          <DealBanner deal={dealOfDay} />
+          {dealOfDay && <DealBanner deal={dealOfDay} />}
           <DealsSection
             title="Deals of the Day"
             tag="🔥 Hot"
-            products={trending}
+            products={trending || []}
             viewAllHref="/deals"
           />
         </section>
@@ -80,7 +95,7 @@ export default async function HomePage() {
               View all <ArrowRight size={14} />
             </Link>
           </div>
-          <ProductGrid products={trending} />
+          <ProductGrid products={trending || []} />
         </section>
 
         {/* Best Under ₹500 */}
@@ -121,7 +136,6 @@ export default async function HomePage() {
               Browse all <ArrowRight size={14} />
             </Link>
           </div>
-          {/* FIX: Add null check before calling .slice() */}
           <ProductGrid products={(products || []).slice(0, 8)} />
         </section>
 

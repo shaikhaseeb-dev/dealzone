@@ -1,10 +1,10 @@
-'use client';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Clock, ArrowRight } from 'lucide-react';
-import { formatPrice } from '@/lib/utils';
-import { useCountdown } from '@/hooks/useCountdown';
-import { useClickTracking } from '@/hooks/useClickTracking';
+"use client";
+import Link from "next/link";
+import Image from "next/image";
+import { Clock, ArrowRight } from "lucide-react";
+import { formatPrice } from "@/lib/utils";
+import { useCountdown } from "@/hooks/useCountdown";
+import { useClickTracking } from "@/hooks/useClickTracking";
 
 export default function DealCard({ product }) {
   const { trackClick } = useClickTracking();
@@ -12,37 +12,48 @@ export default function DealCard({ product }) {
 
   const handleBuy = (e) => {
     e.preventDefault();
-    if (primaryLink) trackClick(product.id, primaryLink.platform, primaryLink.url);
+    if (primaryLink)
+      trackClick(product.id, primaryLink.platform, primaryLink.url);
   };
 
   return (
-    <div className="card flex-shrink-0 w-44 sm:w-52 flex flex-col overflow-hidden
-      hover:scale-[1.03] transition-all duration-300 cursor-pointer group">
+    <div
+      className="card flex-shrink-0 w-44 sm:w-52 flex flex-col overflow-hidden
+      hover:scale-[1.03] transition-all duration-300 cursor-pointer group"
+    >
       <Link href={`/product/${product.slug}`}>
         <div className="relative aspect-square overflow-hidden bg-[var(--bg-secondary)]">
           <Image
-            src={product.images[0]}
-            alt={product.shortTitle}
+            src={product.images?.[0] || "/placeholder.png"}
+            alt={product.shortTitle || "Product"}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
-          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold
-            px-2 py-0.5 rounded-full">
-            -{product.discount}%
+          <div
+            className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold
+            px-2 py-0.5 rounded-full"
+          >
+            -{product.discount || 0}%
           </div>
         </div>
       </Link>
       <div className="p-3 flex flex-col gap-2">
         <Link href={`/product/${product.slug}`}>
-          <p className="text-xs font-medium text-[var(--text)] line-clamp-2 leading-snug
-            group-hover:text-accent transition-colors">
-            {product.shortTitle}
+          <p
+            className="text-xs font-medium text-[var(--text)] line-clamp-2 leading-snug
+            group-hover:text-accent transition-colors"
+          >
+            {product.shortTitle || product.title || "Untitled Product"}
           </p>
         </Link>
         <div className="flex items-baseline gap-1.5">
-          <span className="text-base font-bold text-[var(--text)]">{formatPrice(product.price)}</span>
-          <span className="text-xs text-[var(--text-muted)] line-through">{formatPrice(product.originalPrice)}</span>
+          <span className="text-base font-bold text-[var(--text)]">
+            {formatPrice(product.price || product.best_price || 0)}
+          </span>
+          <span className="text-xs text-[var(--text-muted)] line-through">
+            {formatPrice(product.originalPrice || 0)}
+          </span>
         </div>
         <button
           onClick={handleBuy}
@@ -57,16 +68,27 @@ export default function DealCard({ product }) {
 }
 
 export function DealBanner({ deal }) {
-  const countdown = useCountdown(deal.endsAt);
+  // FIX: Add null check for deal
+  if (!deal) {
+    return null;
+  }
+
+  const countdown = useCountdown(
+    deal.endsAt || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  );
 
   return (
-    <div className={`rounded-xl p-4 bg-gradient-to-r ${deal.color} text-white mb-4`}>
+    <div
+      className={`rounded-xl p-4 bg-gradient-to-r ${deal.color || "from-red-500 to-orange-500"} text-white mb-4`}
+    >
       <div className="flex items-center justify-between">
         <div>
           <span className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full mb-1 inline-block">
-            {deal.tag}
+            {deal.tag || "🔥 Hot Deal"}
           </span>
-          <h3 className="font-bold text-lg leading-tight">{deal.title}</h3>
+          <h3 className="font-bold text-lg leading-tight">
+            {deal.title || "Amazing Deal"}
+          </h3>
         </div>
         {deal.endsAt && (
           <div className="text-right">
