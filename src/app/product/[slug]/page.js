@@ -23,22 +23,35 @@ import { notFound } from "next/navigation";
 export default async function ProductPage({ params }) {
   const { data: product } = await getProductBySlug(params.slug);
 
+  if (!product) notFound();
+
   const { data: allProducts } = await getProducts();
 
   const related = (allProducts || [])
     .filter((p) => p.category === product.category && p.slug !== product.slug)
     .slice(0, 4);
 
-  if (!product) notFound();
-
   const activeImage = 0;
 
-  const lowestPrice = Math.min(
-    ...(product.affiliateLinks
-      ?.filter((l) => l.inStock !== false)
-      .map((l) => l.price) || [product.price]),
-  );
-  const savings = product.originalPrice - lowestPrice;
+  // FIX #1: Safe price calculation with proper fallbacks
+  const priceArray = (product.affiliateLinks || [])
+    .filter((l) => l?.inStock !== false && l?.price)
+    .map((l) => l.price)
+    .filter((p) => p && !isNaN(p));
+
+  const lowestPrice =
+    priceArray.length > 0
+      ? Math.min(...priceArray)
+      : product.best_price || product.price || 0;
+
+  // FIX #2: Safe savings calculation
+  const originalPrice =
+    product.original_price || product.originalPrice || lowestPrice;
+  const savings = Math.max(0, originalPrice - lowestPrice);
+
+  // FIX #3: Safe image access
+  const productImage =
+    product.images?.[activeImage] || product.images?.[0] || "/placeholder.png";
 
   return (
     <>
@@ -51,14 +64,17 @@ export default async function ProductPage({ params }) {
           </Link>
           <ChevronRight size={12} />
           <Link
-            href={`/category/${product.category}`}
+            href={`/category/${product.category || "all"}`}
             className="hover:text-accent transition-colors capitalize"
           >
-            {product.category}
+            {product.category || "Products"}
           </Link>
           <ChevronRight size={12} />
           <span className="text-[var(--text-secondary)] truncate max-w-48">
-            {product.shortTitle}
+            {product.short_title ||
+              product.shortTitle ||
+              product.title ||
+              "Product"}
           </span>
         </nav>
 
@@ -70,14 +86,14 @@ export default async function ProductPage({ params }) {
               bg-[var(--bg-secondary)] border border-[var(--border)]"
             >
               <Image
-                src={product.images[activeImage]}
-                alt={product.title}
+                src={productImage}
+                alt={product.title || "Product"}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
                 priority
               />
-              {product.isTrending && (
+              {product.is_trending && (
                 <div
                   className="absolute top-4 left-4 flex items-center gap-1 bg-orange-500
                   text-white text-xs font-bold px-3 py-1.5 rounded-full"
@@ -86,9 +102,9 @@ export default async function ProductPage({ params }) {
                 </div>
               )}
             </div>
-            {product.images.length > 1 && (
+            {(product.images?.length || 0) > 1 && (
               <div className="flex gap-2">
-                {product.images.map((img, i) => (
+                {(product.images || []).map((img, i) => (
                   <button
                     key={i}
                     onClick={() => {}}
@@ -106,10 +122,10 @@ export default async function ProductPage({ params }) {
           <div className="flex flex-col gap-5">
             <div>
               <div className="flex flex-wrap gap-2 mb-2">
-                {product.isNew && (
+                {product.is_new && (
                   <span className="badge badge-new">✨ New</span>
                 )}
-                {product.inStock ? (
+                {product.in_stock ? (
                   <span className="badge bg-green-500/10 text-green-600 dark:text-green-400">
                     ✓ In Stock
                   </span>
@@ -120,11 +136,14 @@ export default async function ProductPage({ params }) {
                 )}
               </div>
               <h1 className="text-xl sm:text-2xl font-bold text-[var(--text)] leading-tight">
-                {product.title}
+                {product.title || "Untitled Product"}
               </h1>
             </div>
 
-            <StarRating rating={product.rating} reviews={product.reviews} />
+            <StarRating
+              rating={product.rating || 0}
+              reviews={product.reviews || 0}
+            />
 
             {/* Price summary */}
             <div className="p-4 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border)]">
@@ -138,10 +157,10 @@ export default async function ProductPage({ params }) {
                   </span>
                 </div>
                 <span className="text-lg text-[var(--text-muted)] line-through">
-                  {formatPrice(product.originalPrice)}
+                  {formatPrice(originalPrice)}
                 </span>
                 <span className="bg-green-500 text-white text-sm font-bold px-2.5 py-0.5 rounded-full">
-                  {product.discount}% OFF
+                  {product.discount || 0}% OFF
                 </span>
               </div>
               <p className="text-xs text-green-600 dark:text-green-400 mt-1 font-medium">
@@ -152,16 +171,27 @@ export default async function ProductPage({ params }) {
             {/* ★ Multi-platform price comparison */}
             <PlatformPriceTable
               productId={product.id}
-              affiliateLinks={product.affiliateLinks}
+              affiliateLinks={
+                product.affiliate_links || product.affiliateLinks || []
+              }
             />
 
             {/* StickyCTA sentinel */}
-            <StickyCTA product={{ ...product, price: lowestPrice }} />
+            <StickyCTA
+              product={{
+                ...product,
+                price: lowestPrice,
+                best_price: lowestPrice,
+              }}
+            />
 
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-3">
               {[
-                { icon: Truck, label: product.delivery || "Free Delivery" },
+                {
+                  icon: Truck,
+                  label: product.delivery || "Free Delivery in 2-3 days",
+                },
                 { icon: Shield, label: product.warranty || "1 Year Warranty" },
                 { icon: RotateCcw, label: "Easy Returns" },
               ].map(({ icon: Icon, label }) => (
@@ -179,13 +209,13 @@ export default async function ProductPage({ params }) {
             </div>
 
             {/* Key Features */}
-            {product.features?.length > 0 && (
+            {(product.features?.length || 0) > 0 && (
               <div>
                 <h3 className="font-semibold text-[var(--text)] mb-3">
                   Key Features
                 </h3>
                 <ul className="space-y-2">
-                  {product.features.map((f, i) => (
+                  {(product.features || []).map((f, i) => (
                     <li
                       key={i}
                       className="flex items-start gap-2 text-sm text-[var(--text-secondary)]"
