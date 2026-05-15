@@ -546,7 +546,7 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-2">
                         {/* Platform select */}
                         <select
-                          value={link.platform}
+                          value={link.platform || "Amazon"}
                           onChange={(e) =>
                             setLink(i, "platform", e.target.value)
                           }
@@ -604,7 +604,7 @@ export default function AdminProductsPage() {
                       <input
                         value={link.url}
                         onChange={(e) => setLink(i, "url", e.target.value)}
-                        placeholder={`https://www.${link.platform.toLowerCase()}.in/dp/YOUR_AFFILIATE_LINK`}
+                        placeholder={`https://www.${(link.platform || "amazon").toLowerCase()}.in/dp/YOUR_AFFILIATE_LINK`}
                         className="input-field text-xs font-mono"
                       />
                     </div>
