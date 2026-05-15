@@ -161,7 +161,7 @@ export default async function AdminDashboard() {
                 </div>
                 <div className="text-right">
                   <div className="text-sm font-semibold text-[var(--text)]">
-                    {formatNumber(p.clicks)}
+                    {formatNumber(p.clicks || 0)}
                   </div>
                   <div className="text-xs text-[var(--text-muted)]">clicks</div>
                 </div>
@@ -183,13 +183,13 @@ export default async function AdminDashboard() {
                     {cat.category}
                   </span>
                   <span className="font-medium text-[var(--text)]">
-                    {formatNumber(cat.clicks)}
+                    {formatNumber(cat.clicks || 0)}
                   </span>
                 </div>
                 <div className="h-2 rounded-full bg-[var(--bg-secondary)]">
                   <div
                     className="h-full rounded-full bg-accent transition-all duration-500"
-                    style={{ width: `${cat.percentage}%` }}
+                    style={{ width: `${cat.percentage || 0}%` }}
                   />
                 </div>
               </div>
@@ -239,12 +239,12 @@ export default async function AdminDashboard() {
                 >
                   <td className="py-3 px-2 first:pl-0">
                     <span className="font-medium text-[var(--text)] truncate max-w-40 block">
-                      {p.shortTitle}
+                      {p.shortTitle || p.short_title || p.title || "Untitled"}
                     </span>
                   </td>
                   <td className="py-3 px-2 capitalize">
                     <span className="text-[var(--text-secondary)]">
-                      {p.category}
+                      {p.category || "Uncategorized"}
                     </span>
                   </td>
                   {/* FIX #4: Safe price fallback */}
@@ -252,10 +252,12 @@ export default async function AdminDashboard() {
                     {formatPrice(p.price || p.best_price || 0)}
                   </td>
                   <td className="py-3 px-2">
-                    <span className="badge badge-discount">{p.discount}%</span>
+                    <span className="badge badge-discount">
+                      {p.discount || 0}%
+                    </span>
                   </td>
                   <td className="py-3 px-2 text-[var(--text-secondary)]">
-                    {formatNumber(p.clicks)}
+                    {formatNumber(p.clicks || 0)}
                   </td>
                   <td className="py-3 px-2">
                     <span
