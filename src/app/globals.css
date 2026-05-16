@@ -113,17 +113,73 @@
   .badge {
     @apply inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full;
   }
-
   .badge-discount {
-    @apply badge bg-green-500/10 text-green-600 dark:bg-green-400/10 dark:text-green-400;
+    @apply badge;
+    background: linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.15),
+      rgba(34, 197, 94, 0.05)
+    );
+    color: rgb(22, 163, 74);
+    border: 1px solid rgba(34, 197, 74, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .badge-discount {
+    background: linear-gradient(
+      135deg,
+      rgba(134, 239, 172, 0.12),
+      rgba(134, 239, 172, 0.05)
+    );
+    color: rgb(134, 239, 172);
+    border: 1px solid rgba(134, 239, 172, 0.3);
   }
 
   .badge-trending {
-    @apply badge bg-orange-500/10 text-orange-600 dark:bg-orange-400/10 dark:text-orange-400;
+    @apply badge;
+    background: linear-gradient(
+      135deg,
+      rgba(249, 115, 22, 0.15),
+      rgba(249, 115, 22, 0.05)
+    );
+    color: rgb(194, 65, 12);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .badge-trending {
+    background: linear-gradient(
+      135deg,
+      rgba(253, 186, 116, 0.12),
+      rgba(253, 186, 116, 0.05)
+    );
+    color: rgb(253, 186, 116);
+    border: 1px solid rgba(253, 186, 116, 0.3);
   }
 
   .badge-new {
-    @apply badge bg-accent/10 text-accent-600 dark:text-accent-400;
+    @apply badge;
+    background: linear-gradient(
+      135deg,
+      rgba(59, 130, 246, 0.15),
+      rgba(59, 130, 246, 0.05)
+    );
+    color: rgb(29, 78, 216);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .dark .badge-new {
+    background: linear-gradient(
+      135deg,
+      rgba(147, 197, 253, 0.12),
+      rgba(147, 197, 253, 0.05)
+    );
+    color: rgb(147, 197, 253);
+    border: 1px solid rgba(147, 197, 253, 0.3);
   }
 
   .skeleton {
@@ -175,33 +231,38 @@
 }
 
 /* ───────── Product Admin Modal ───────── */
+/* ───────── Product Admin Modal ───────── */
 
 .product-modal {
   width: 100%;
-  max-width: 1400px;
-
-  min-height: 95vh;
-
-  margin: 8px auto;
-
+  max-width: 900px;
+  max-height: 90vh;
+  margin: auto;
   display: flex;
   flex-direction: column;
-
   overflow: hidden;
-
   border-radius: 24px;
-
   background: var(--bg-card);
-
   border: 1px solid var(--border);
-
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
 }
 
 .product-modal-body {
   flex: 1;
-
   padding: 24px;
-
   overflow-y: auto;
+}
+
+/* Fix modal centering */
+.product-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.product-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-modal-body::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 99px;
 }

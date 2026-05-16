@@ -76,7 +76,7 @@ export function PlatformButton({ link, productId, size = "sm" }) {
           size === "sm" ? "text-xs" : "text-sm",
         )}
       >
-        {formatPrice(link.price)}
+        {formatPrice(link.price || 0)}
         <ExternalLink size={size === "sm" ? 10 : 13} />
       </span>
     </button>
@@ -87,16 +87,25 @@ export default function ProductCard({ product, variant = "default" }) {
   const [imgError, setImgError] = useState(false);
   const { trackClick } = useClickTracking();
 
+  // FIX: Safe affiliate links handling
   const inStockLinks =
-    product.affiliateLinks?.filter((l) => l.inStock !== false) || [];
+    (product.affiliateLinks || product.affiliate_links || []).filter(
+      (l) => l && l.inStock !== false && (l.price || 0) > 0,
+    ) || [];
+
   const primaryLink = inStockLinks[0];
   const hasMultiple = inStockLinks.length > 1;
 
-  // Lowest price across in-stock platforms
-  const lowestPrice = inStockLinks.reduce(
-    (min, l) => (l.price < min ? l.price : min),
-    inStockLinks[0]?.price || product.price,
-  );
+  // FIX: Calculate lowest price safely
+  const lowestPrice =
+    inStockLinks.length > 0
+      ? Math.min(...inStockLinks.map((l) => parseFloat(l.price) || 0))
+      : product.best_price || product.price || 0;
+
+  // FIX: Safe discount and original price
+  const discount = product.discount || 0;
+  const originalPrice =
+    product.original_price || product.originalPrice || lowestPrice || 0;
 
   if (variant === "compact") {
     return (
@@ -122,14 +131,17 @@ export default function ProductCard({ product, variant = "default" }) {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-[var(--text)] line-clamp-2 leading-snug">
-              {product.shortTitle || product.title || "Untitled Product"}
+              {product.shortTitle ||
+                product.short_title ||
+                product.title ||
+                "Untitled Product"}
             </p>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-base font-bold text-[var(--text)]">
                 {formatPrice(lowestPrice)}
               </span>
               <span className="text-xs text-green-500 font-semibold">
-                {product.discount}% off
+                {discount}% off
               </span>
             </div>
             {hasMultiple && (
@@ -167,18 +179,20 @@ export default function ProductCard({ product, variant = "default" }) {
         )}
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {(product.discount || 0) >= 50 && (
-            <span className="badge-discount text-xs">-{product.discount}%</span>
-          )}
-          {product.isTrending && (
-            <span className="badge-trending text-xs">
-              <TrendingUp size={10} /> Trending
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+          {discount >= 20 && (
+            <span className="badge-discount text-xs font-bold px-2 py-1">
+              -{discount}%
             </span>
           )}
-          {product.isNew && (
-            <span className="badge-new text-xs">
-              <Sparkles size={10} /> New
+          {product.is_trending && (
+            <span className="badge-trending text-xs font-bold px-2 py-1">
+              <TrendingUp size={10} className="inline mr-1" /> Trending
+            </span>
+          )}
+          {product.is_new && (
+            <span className="badge-new text-xs font-bold px-2 py-1">
+              <Sparkles size={10} className="inline mr-1" /> New
             </span>
           )}
         </div>
@@ -186,10 +200,10 @@ export default function ProductCard({ product, variant = "default" }) {
         {/* Multi-platform badge */}
         {hasMultiple && (
           <div
-            className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm
-            text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"
+            className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm
+            text-white text-xs px-2.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold z-10"
           >
-            <ShoppingBag size={10} />
+            <ShoppingBag size={11} />
             {inStockLinks.length} stores
           </div>
         )}
@@ -202,7 +216,10 @@ export default function ProductCard({ product, variant = "default" }) {
             className="text-sm font-medium text-[var(--text)] line-clamp-2 leading-snug
             group-hover:text-accent transition-colors"
           >
-            {product.shortTitle || product.title || "Untitled Product"}
+            {product.shortTitle ||
+              product.short_title ||
+              product.title ||
+              "Untitled Product"}
           </h3>
         </Link>
 
@@ -233,7 +250,7 @@ export default function ProductCard({ product, variant = "default" }) {
             {formatPrice(lowestPrice)}
           </span>
           <span className="text-xs text-[var(--text-muted)] line-through">
-            {formatPrice(product.originalPrice || 0)}
+            {formatPrice(originalPrice)}
           </span>
         </div>
 
@@ -254,6 +271,11 @@ export default function ProductCard({ product, variant = "default" }) {
             >
               +{inStockLinks.length - 2} more options →
             </Link>
+          )}
+          {inStockLinks.length === 0 && (
+            <div className="text-xs text-center text-[var(--text-muted)] py-2 px-2 bg-[var(--bg-secondary)] rounded-lg">
+              No available sellers
+            </div>
           )}
         </div>
       </div>
