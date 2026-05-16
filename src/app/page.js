@@ -132,7 +132,7 @@ export default async function HomePage() {
               Browse all <ArrowRight size={14} />
             </Link>
           </div>
-          <ProductGrid products={(products || []).slice(0, 8)} />
+          <ProductGrid products={products || []} />
         </section>
 
         {/* Newsletter / CTA Banner */}

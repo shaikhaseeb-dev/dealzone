@@ -114,35 +114,49 @@
     @apply inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full;
   }
   .badge-discount {
-    @apply badge;
-    background: linear-gradient(
-      135deg,
-      rgba(34, 197, 94, 0.15),
-      rgba(34, 197, 94, 0.05)
-    );
-    color: rgb(22, 163, 74);
-    border: 1px solid rgba(34, 197, 74, 0.3);
-    font-weight: 700;
-    letter-spacing: 0.5px;
-  }
+    /* SOLID OPAQUE BADGES - NOW FULLY VISIBLE */
 
-  .dark .badge-discount {
-    background: linear-gradient(
-      135deg,
-      rgba(134, 239, 172, 0.12),
-      rgba(134, 239, 172, 0.05)
-    );
-    color: rgb(134, 239, 172);
-    border: 1px solid rgba(134, 239, 172, 0.3);
-  }
+    .badge-discount {
+      @apply badge font-bold;
+      background-color: #16a34a;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      border: 1px solid #15803d;
+    }
 
-  .badge-trending {
-    @apply badge;
-    background: linear-gradient(
-      135deg,
-      rgba(249, 115, 22, 0.15),
-      rgba(249, 115, 22, 0.05)
-    );
+    .dark .badge-discount {
+      background-color: #22c55e;
+      color: #ffffff;
+      border: 1px solid #16a34a;
+    }
+
+    .badge-trending {
+      @apply badge font-bold;
+      background-color: #ea580c;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      border: 1px solid #c2410c;
+    }
+
+    .dark .badge-trending {
+      background-color: #fb923c;
+      color: #ffffff;
+      border: 1px solid #ea580c;
+    }
+
+    .badge-new {
+      @apply badge font-bold;
+      background-color: #2563eb;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      border: 1px solid #1d4ed8;
+    }
+
+    .dark .badge-new {
+      background-color: #60a5fa;
+      color: #ffffff;
+      border: 1px solid #2563eb;
+    }
     color: rgb(194, 65, 12);
     border: 1px solid rgba(249, 115, 22, 0.3);
     font-weight: 700;

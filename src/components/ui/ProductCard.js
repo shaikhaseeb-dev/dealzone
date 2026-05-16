@@ -178,35 +178,37 @@ export default function ProductCard({ product, variant = "default" }) {
           </div>
         )}
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          {discount >= 20 && (
-            <span className="badge-discount text-xs font-bold px-2 py-1">
-              -{discount}%
-            </span>
-          )}
-          {product.is_trending && (
-            <span className="badge-trending text-xs font-bold px-2 py-1">
-              <TrendingUp size={10} className="inline mr-1" /> Trending
-            </span>
-          )}
-          {product.is_new && (
-            <span className="badge-new text-xs font-bold px-2 py-1">
-              <Sparkles size={10} className="inline mr-1" /> New
-            </span>
+        {/* Badges - IMPROVED POSITIONING & VISIBILITY */}
+        <div className="absolute inset-0 p-2 flex flex-col items-start justify-between pointer-events-none">
+          {/* Top badges - Stack vertically */}
+          <div className="flex flex-col gap-1.5 items-start">
+            {discount >= 20 && (
+              <div className="badge-discount text-xs font-bold px-3 py-1.5 pointer-events-auto shadow-lg">
+                Save {discount}%
+              </div>
+            )}
+            {product.is_trending && (
+              <div className="badge-trending text-xs font-bold px-3 py-1.5 flex items-center gap-1 pointer-events-auto shadow-lg">
+                <TrendingUp size={12} />
+                Trending
+              </div>
+            )}
+            {product.is_new && (
+              <div className="badge-new text-xs font-bold px-3 py-1.5 flex items-center gap-1 pointer-events-auto shadow-lg">
+                <Sparkles size={12} />
+                New
+              </div>
+            )}
+          </div>
+
+          {/* Bottom right - Multi-store badge */}
+          {hasMultiple && (
+            <div className="absolute bottom-2 right-2 bg-black/85 backdrop-blur-md text-white text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 font-bold shadow-lg">
+              <ShoppingBag size={12} />
+              {inStockLinks.length} stores
+            </div>
           )}
         </div>
-
-        {/* Multi-platform badge */}
-        {hasMultiple && (
-          <div
-            className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm
-            text-white text-xs px-2.5 py-1.5 rounded-full flex items-center gap-1.5 font-bold z-10"
-          >
-            <ShoppingBag size={11} />
-            {inStockLinks.length} stores
-          </div>
-        )}
       </Link>
 
       {/* Content */}
